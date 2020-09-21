@@ -5,7 +5,11 @@
   3.x versions get published.
 -->
 
-## 3.10.2
+## 3.10.2-guava
+
+- [bug] Guava: HostAndPort has changed in guava 23.0 - fails
+
+## 3.10.2-guava
 
 - [bug] JAVA-2860: Avoid NPE if channel initialization crashes.
 
