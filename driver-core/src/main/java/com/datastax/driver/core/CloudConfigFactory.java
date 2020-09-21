@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
-import com.google.common.net.HostAndPort;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -222,14 +221,13 @@ class CloudConfigFactory {
   protected InetSocketAddress getSniProxyAddress(JsonNode proxyMetadata) {
     JsonNode contactInfo = getContactInfo(proxyMetadata);
     if (contactInfo.has("sni_proxy_address")) {
-      HostAndPort sniProxyHostAndPort =
-          HostAndPort.fromString(contactInfo.get("sni_proxy_address").asText());
-      if (!sniProxyHostAndPort.hasPort()) {
+      String[] sniProxyHostAndPort = contactInfo.get("sni_proxy_address").asText().split(":");
+      if (sniProxyHostAndPort.length != 2) {
         throw new IllegalStateException(
             "Invalid proxy metadata: missing port from field sni_proxy_address");
       }
       return InetSocketAddress.createUnresolved(
-          sniProxyHostAndPort.getHostText(), sniProxyHostAndPort.getPort());
+          sniProxyHostAndPort[0], Integer.parseInt(sniProxyHostAndPort[1]));
     } else {
       throw new IllegalStateException("Invalid proxy metadata: missing field sni_proxy_address");
     }
